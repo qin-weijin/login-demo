@@ -2,5 +2,5 @@
   <router-view #="{ Component }">
     <component :is="Component" />
   </router-view>
-</template>    
+</template>
 <script setup lang="ts"></script>

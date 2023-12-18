@@ -1,3 +1,2 @@
-<template>
-  <h1>This Login</h1>
-</template>
+<template>This View Login</template>
+<script></script>

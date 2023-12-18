@@ -1,3 +1,2 @@
-<template>
-  <h1>This dashboard/welcome</h1>
-</template>
+<template>This Layout Index</template>
+<script type="text/javascript"></script>

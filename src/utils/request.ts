@@ -1,123 +1,42 @@
+/*
+
+- type BaseResponse - Promise
+- type Response - code, message, data 请求结果类型
+- interface RequestOptions - request 选项
+
+**发送请求**
+
+    request(config, options)    // 调用 axios.request() 
+
+- options.permCode 和 useUserStore.perms.permCode - 不存在则终止请求
+- 判断 isMock 补全 fullUrl
+- 打印成功/失败消息，返回 res.data / res
+
+**创建请求**
+
+- axios.create
+- axios.interceptors.request.use - 拦截请求，添加 config.headers.Authorization
+- axios.interceptors.response.use - 拦截响应，添加状态码处理
+
+**参数**
+
+- config: AxiosRequestConfig - Axios 配置对象
+  + url, method, ...
+- options: RequestOptions - Request 选项对象
+  + permCode - 权限
+  + isGetDataDirectly - return res.data / res
+  + successMsg - 请求成功时打印
+  + errorrMsg - 请求失败时打印
+  + isMock - Mock Data / real Data
+*/ 
+
 import axios from 'axios';
-import { message as $message } from 'ant-design-vue';
-import type { AxiosRequestConfig } from 'axios';  // 请求配置
-import { ACCESS_TOKEN_KEY } from '@/enums/cacheEnum';
-import { Storage } from '@/utils/Storage';
-import { useUserStore } from '@/store/modules/user';
-import { uniqueSlash } from '@/utils/urlUtils';
 
-// 定义请求选项类
-export interface RequestOptions {
-  /** 当前接口权限, 不需要鉴权的接口请忽略， 格式：sys:user:add */
-  permCode?: string;
-  /** 是否直接获取data，而忽略message等 */
-  isGetDataDirectly?: boolean;
-  /** 请求成功是提示信息 */
-  successMsg?: string;
-  /** 请求失败是提示信息 */
-  errorMsg?: string;
-  /** 是否mock数据请求 */
-  isMock?: boolean;
-}
+// 创建请求
+const service = axios.create({timeout: 6000})
 
-const UNKNOWN_ERROR = '未知错误，请重试';
-
-/** 真实请求的路径前缀 */
-const baseApiUrl = import.meta.env.VITE_BASE_API;
-/** mock请求路径前缀 */
-const baseMockUrl = import.meta.env.VITE_MOCK_API;
-
-// 创建 Axios 实例
-const service = axios.create({ timeout: 6000 })
-
-// 拦截器请求，存在 token 则添加到 config.headers.Authorization
-service.interceptors.request.use(
-  (config) => {
-    const token = Storage.get(ACCESS_TOKEN_KEY);
-    if (token && config.headers) {
-      // 请求头token信息，请根据实际情况进行修改
-      config.headers['Authorization'] = token;
-    }
-    return config;
-  },
-  (error) => {
-    Promise.reject(error);
-  },
-);
-// 拦截器响应
-service.interceptors.response.use(
-  (response) => {
-    const res = response.data;
-
-    // if the custom code is not 200, it is judged as an error.
-    if (res.code !== 200) {
-      $message.error(res.message || UNKNOWN_ERROR);
-
-      // Illegal token
-      if (res.code === 11001 || res.code === 11002) {
-        window.localStorage.clear();
-        window.location.reload();
-        // to re-login
-        // Modal.confirm({
-        //   title: '警告',
-        //   content: res.message || '账号异常，您可以取消停留在该页上，或重新登录',
-        //   okText: '重新登录',
-        //   cancelText: '取消',
-        //   onOk: () => {
-        //     localStorage.clear();
-        //     window.location.reload();
-        //   }
-        // });
-      }
-
-      // throw other
-      const error = new Error(res.message || UNKNOWN_ERROR) as Error & { code: any };
-      error.code = res.code;
-      return Promise.reject(error);
-    } else {
-      return res;
-    }
-  },
-  (error) => {
-    // 处理 422 或者 500 的错误异常提示
-    const errMsg = error?.response?.data?.message ?? UNKNOWN_ERROR;
-    $message.error({ content: errMsg, key: errMsg });
-    error.message = errMsg;
-    return Promise.reject(error);
-  },
-);
-
-// 请求结果类型
-export type Response<T = any> = {
-  code: number;
-  message: string;
-  data: T;
-};
-
-export type BaseResponse<T = any> = Promise<Response<T>>;
-
-export const request = async <T = any>(
-  config: AxiosRequestConfig,
-  options: RequestOptions = {},
-): Promise<T> => {
+export const request = async (config, options) => {
   try {
-    const { successMsg, errorMsg, permCode, isMock, isGetDataDirectly = true } = options; // 请求选项
-    // 需要鉴权 permCode 且 useUserStore.perms.permCode 不存在权限
-    if (permCode && !useUserStore().perms.includes(permCode)) {
-      // 则终止请求
-      return $message.error('你没有访问该接口的权限，请联系管理员！');
-    }
-    // 判断 mock 或真实数据，补全传入的 url
-    const fullUrl = `${(isMock ? baseMockUrl : baseApiUrl) + config.url}`;    
-    // 格式化路径
-    config.url = uniqueSlash(fullUrl);
-
-    const res = await service.request(config);
-    successMsg && $message.success(successMsg);
-    errorMsg && $message.error(errorMsg);
-    return isGetDataDirectly ? res.data : res;    
-
-  } catch (error: any) {
-    return Promise.reject(error)
-  }
+    const res = await service.request(config);    
+  } catch () {}
 }

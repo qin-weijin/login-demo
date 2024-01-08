@@ -67,9 +67,13 @@
   import type { Rule } from 'ant-design-vue/es/form';
   import { UserOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons-vue'
   import { message, Modal } from 'ant-design-vue';
-  import axios from 'axios';
-  import { useUserStore } from '@/store/user';
+  import { useUserStore } from '@/store/modules/user';
   import { to } from '@/utils/awaitTo';
+  import { getImageCaptcha } from '@/utils/request'
+  import { useRoute, useRouter } from 'vue-router';  
+
+  const route = useRoute();
+  const router = useRouter();
 
   const state = reactive({
     remember: true,
@@ -108,12 +112,9 @@
 
   const setCaptcha = async<T = any>(): Promise<T> => {
     try {
-      const res = await axios.get(
-        'https://nest-api.buqiyuan.site/api/admin/captcha/img',
-        { params: { width: 100, height: 50 } }
-      );
-      state.captcha = res.data.data.img;
-      state.formInline.captchaId = res.data.data.id;
+      const {img, id} = await getImageCaptcha({ width: 100, height: 50 })      
+      state.captcha = img;
+      state.formInline.captchaId = id;
     } catch (error: any) { return Promise.reject(error); }    
   }
   setCaptcha()

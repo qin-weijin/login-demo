@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { Storage } from '@/store/user.ts';
+import { Storage } from '@/utils/Storage.ts';
 
 export const routes = [
-  { path: '/', redirect: '/login',},
+  { path: '/', name: 'Layout', redirect: '/login',},
   { path: '/dashboard/welcome', component: () => import('@/views/dashboard/welcome.vue')},
-  { path: '/login', component: () => import('@/views/login.vue')},
+  { path: '/login', name: 'Login', component: () => import('@/views/login.vue')},
 ]
 
 export const router = createRouter({
@@ -12,19 +12,26 @@ export const router = createRouter({
   routes,
 })
 
-
-router.beforeEach((to, from, next) => {
-
+router.beforeEach(async (to, from) => {
   const token = Storage.get('ACCESS_TOKEN')
+  if (token){
+    if (to.path !== '/dashboard/welcome'){ 
+      return {path: '/dashboard/welcome'} 
+    } else {
+      return true
+    }
+  } else { 
 
-  if (token) {
-    // 已登录，将登录页导航到首页
-    if (to.name === 'Login') { 
-      next({ path: '/dashboard/welcome' }) 
-    } else { next({ path: '/dashboard/welcome' }) }
-  } else {
-    next({ name: 'Login', query: { redirect: to.fullPath }, replace: true });
+    if ('Login' === to.name) { 
+      return true
+    } else {
+      // 非 Login 重定向，以参数形式携带
+      return { name: 'Login', query: { redirect: to.fullPath }, replace: true } 
+    }
   }
 })
 
 export default router
+
+
+

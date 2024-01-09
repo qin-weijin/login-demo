@@ -1,5 +1,9 @@
 # Login Demo 登录功能演示
 
+本例使用 Axios 从服务器获取验证码、登录请求、密码校验。</br>
+通过 Window Storage 储存返回的 token 保留登录状态。</br>
+使用 Pinia 创建用户状态对象，储存用户数据。</br>
+
 ## 技术栈
 
 | Methods        | Description |

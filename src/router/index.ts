@@ -3,7 +3,7 @@ import { Storage } from '@/utils/Storage.ts';
 
 export const routes = [
   { path: '/', name: 'Layout', redirect: '/login',},
-  { path: '/dashboard/welcome', component: () => import('@/views/dashboard/welcome.vue')},
+  { path: '/dashboard/welcome', name: 'Welcome', component: () => import('@/views/dashboard/welcome.vue')},
   { path: '/login', name: 'Login', component: () => import('@/views/login.vue')},
 ]
 
@@ -21,11 +21,9 @@ router.beforeEach(async (to, from) => {
       return true
     }
   } else { 
-
     if ('Login' === to.name) { 
       return true
     } else {
-      // 非 Login 重定向，以参数形式携带
       return { name: 'Login', query: { redirect: to.fullPath }, replace: true } 
     }
   }

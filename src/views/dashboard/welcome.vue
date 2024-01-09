@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, watchEffect, h } from 'vue';
+  import { h } from 'vue';
   import { useUserStore } from '@/store/modules/user';
   import { PoweroffOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';

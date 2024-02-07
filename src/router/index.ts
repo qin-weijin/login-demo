@@ -13,6 +13,7 @@ export const router = createRouter({
 })
 
 router.beforeEach(async (to, from) => {
+  console.log(to)
   const token = Storage.get('ACCESS_TOKEN')
   if (token){
     if (to.path !== '/dashboard/welcome'){ 

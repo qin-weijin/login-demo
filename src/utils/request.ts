@@ -6,7 +6,7 @@ export function login(data: API.LoginParams) {
     url: 'login',
     method: 'post',
     data
-  }, { isGetDataDirectly: false });
+  }, { isGetDataDirectly: false, isMock: true });
 }
 
 export function getImageCaptcha(params?: API.CaptchaParams) {
@@ -25,6 +25,7 @@ export function logout() {
 
 const service = axios.create({ timeout: 6000 })
 
+// 拦截器
 service.interceptors.response.use((response) => {
   const res = response.data;
   if (res.code !== 200) {
@@ -45,9 +46,9 @@ const baseMockUrl = import.meta.env.VITE_MOCK_API;
 export const request = async <T = any>(config: AxiosRequestConfig, options: RequestOptions = {},): Promise<T> => {
   try {
     const {isMock = false, isGetDataDirectly = true} = options;
-    config.url = `${(isMock ? baseMockUrl : baseApiUrl) + config.url}`;
+    config.url = `${(isMock ? baseMockUrl : baseApiUrl) + config.url}`;    
     const res = await service.request(config);
-    return isGetDataDirectly ? res.data : res    
+    return isGetDataDirectly ? res.data : res
   } catch(error: any) {
     return Promise.reject(error);
   }

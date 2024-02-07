@@ -1,8 +1,9 @@
-# Login Demo 登录功能演示
+# 登录功能演示
 
-本例使用 Axios 从服务器获取验证码、登录请求、密码校验。</br>
-通过 Window Storage 储存返回的 token 保留登录状态。</br>
-使用 Pinia 创建用户状态对象，储存用户数据。</br>
+本例展示了登录功能的实现过程。
+通过 Axios 从服务器中获取验证码和提交用户登录数据。
+本地缓存 Window Storage 接收通过服务器验证后返回的 token，记录用户登录状态。
+Pina 创建用户状态对象。
 
 ## 技术栈
 
@@ -213,3 +214,7 @@ router.beforeEach(async (to, from) => {
   }
 })
 ```
+
+## 持续更新
+
+- Welcome 页优化

@@ -42,7 +42,7 @@ export const useUserStore = defineStore({
     async afterLogin() {},
     /** 登出 */
     async logout() {
-      await logout();
+      // await logout();
       this.resetToken();
     },
     /** 清空用户信息 */

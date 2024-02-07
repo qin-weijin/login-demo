@@ -8,7 +8,7 @@
     <!-- Username -->
     <a-form layout="horizontal" :model="state.formInline" @submit.prevent="handleSubmit">
       <a-form-item>
-        <a-input v-model:value="state.formInline.username" size="large" placeholder="rootadmin">
+        <a-input v-model:value="state.formInline.username" size="large" placeholder="admin">
           <template #prefix><user-outlined type="user" /></template>
         </a-input>
       </a-form-item>
@@ -74,25 +74,23 @@
 
   const route = useRoute();
   const router = useRouter();
-
+  const userStore = useUserStore();
   const state = reactive({
     remember: true,
     captcha: '',
     formInline: {
       username: '',
       password: '',
-      verifyCode: '',
       captchaId: '',
+      verifyCode: '',
     }
   });
-  const userStore = useUserStore();
 
   // 验证用户名、密码、验证码不为空。
   const disabled = computed(() => {
     return !(state.formInline.username && state.formInline.password && state.formInline.verifyCode);
   });
-
-
+  // 提交登录
   const handleSubmit = async () => {
     const patt = /^\w{5,12}$/;
     const { username, password, verifyCode } = state.formInline;    
@@ -101,15 +99,18 @@
     } else if(verifyCode.length < 4){
       return message.warning("验证码必须为四位数字或字符串！")
     }
-    const [err] = await to(userStore.login(state.formInline));
+    const [err] = await to(userStore.login(state.formInline))
     if (err) {
-      message.warning(err)
+      console.log(err)
+      setCaptcha()
     } else {
       message.success('登录成功！');
-      setTimeout(() => router.replace((route.query.redirect as string) ?? '/'));
+      setTimeout(() => router.replace('/'));
+      // setTimeout(() => router.replace((route.query.redirect as string) ?? '/'));
     }
+    message.destroy()
   }
-
+  // 获取验证码
   const setCaptcha = async<T = any>(): Promise<T> => {
     try {
       const {img, id} = await getImageCaptcha({ width: 100, height: 50 })      
@@ -119,7 +120,6 @@
   }
   setCaptcha()
 </script>
-
 <style lang="less" scoped>
   .login-box {
     display: flex;

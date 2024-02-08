@@ -2,9 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { Storage } from '@/utils/Storage.ts';
 
 export const routes = [
-  { path: '/', name: 'Layout', redirect: '/login',},
+  // { path: '/', name: 'Layout', redirect: '/login',},
+  { path: '/', name: 'Login', component: () => import('@/views/login.vue')},
   { path: '/dashboard/welcome', name: 'Welcome', component: () => import('@/views/dashboard/welcome.vue')},
-  { path: '/login', name: 'Login', component: () => import('@/views/login.vue')},
+  // { path: '/login', name: 'Login', component: () => import('@/views/login.vue')},
 ]
 
 export const router = createRouter({
@@ -13,7 +14,6 @@ export const router = createRouter({
 })
 
 router.beforeEach(async (to, from) => {
-  console.log(to)
   const token = Storage.get('ACCESS_TOKEN')
   if (token){
     if (to.path !== '/dashboard/welcome'){ 

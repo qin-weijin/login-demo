@@ -105,8 +105,6 @@
       setCaptcha()
     } else {
       message.success('登录成功！');
-      console.log(router)
-
       router.replace({path: '/dashboard/welcome'})
     }
     message.destroy()

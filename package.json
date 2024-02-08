@@ -8,7 +8,8 @@
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
-    "type-check": "vue-tsc --build --force"
+    "type-check": "vue-tsc --build --force",
+    "deploy": "gh-pages -d dist -r https://github.com/qin-weijin/login-demo.git -b gh-pages"    
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
@@ -23,8 +24,9 @@
     "@types/node": "^18.19.3",
     "@vitejs/plugin-vue": "^4.5.2",
     "@vue/tsconfig": "^0.5.0",
-    "mockjs": "^1.1.0",
+    "gh-pages": "^6.1.1",
     "less": "^4.2.0",
+    "mockjs": "^1.1.0",
     "npm-run-all2": "^6.1.1",
     "sass": "^1.69.6",
     "sass-loader": "^13.3.3",
